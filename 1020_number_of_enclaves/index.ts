@@ -1,33 +1,30 @@
 import { test1, test2, test27 } from './data';
 
 const LAND = 1;
+const LAND_IN_PROCESS = 2;
 const ZERO = 0;
+const WAS = '*';
+
 const DIRECTIONS = [
-  [0, -1],
   [-1, 0],
+  [0, -1],
   [0, 1],
   [1, 0],
 ];
 
-function numEnclaves(grid: number[][]): number {
+function numEnclaves(grid: (number | string)[][]): number {
   let ones = 0;
-  this.visited = {};
   this.queue = [];
 
   for (let i = 0; i < grid.length; i++) {
-    if (!this.visited[i]) {
-      this.visited[i] = {};
-    }
     for (let j = 0; j < grid[i].length; j++) {
-      if (i === 4 && j === 7) {
-        debugger;
-      }
-      if (grid[i][j] === LAND && !this.visited[i][j]) {
+      if (grid[i][j] === LAND && grid[i][j] !== WAS) {
         this.queue.unshift([i, j]);
+        grid[i][j] = LAND_IN_PROCESS;
         ones += findOnes.call(this, grid);
       }
 
-      this.visited[i][j] = true;
+      grid[i][j] = WAS;
     }
   }
   return ones;
@@ -39,11 +36,7 @@ function findOnes(grid) {
   while (this.queue.length) {
     const [i, j] = this.queue.shift();
 
-    if (!this.visited[i]) {
-      this.visited[i] = {};
-    }
-
-    if (!this.visited[i][j]) {
+    if (grid[i][j] === LAND_IN_PROCESS) {
       ones++;
     }
 
@@ -52,7 +45,7 @@ function findOnes(grid) {
       isTouchedBorder = isTouchedBorder || res;
     }
 
-    this.visited[i][j] = true;
+    grid[i][j] = WAS;
   }
 
   return isTouchedBorder ? 0 : ones;
@@ -63,7 +56,8 @@ function hasTouchedBorder(i, j, grid) {
     return true;
   }
 
-  if (!this.visited[i]?.[j] && grid[i][j] === LAND) {
+  if (grid[i][j] === LAND) {
+    grid[i][j] = LAND_IN_PROCESS;
     this.queue.push([i, j]);
   }
 
