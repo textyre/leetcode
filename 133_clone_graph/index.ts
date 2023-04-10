@@ -19,21 +19,43 @@ function cloneGraph(node: Node | null): Node | null {
 
   while (queue.length) {
     const n = queue.shift();
-
-    if (!map.get(n.val)) {
-      const cloneNode = new Node(n.val);
-      map.set(cloneNode.val, cloneNode);
-    }
+    const cloneNode = map.get(n.val) || new Node(n.val);
 
     n.neighbors.forEach((item) => {
-      const cloneItem = new Node(item.val);
       if (!map.get(item.val)) {
+        const cloneItem = new Node(item.val);
         queue.unshift(item);
         map.set(item.val, cloneItem);
       }
-      n.neighbors.push(map.get(item.val) || cloneItem);
+
+      cloneNode.neighbors.push(map.get(item.val));
     });
+
+    map.set(cloneNode.val, cloneNode);
   }
 
   return map.get(node.val);
+}
+
+const map = {
+  3: {
+    n: [2, 4]
+  },
+  4: {
+    n: [1,3]
+  },
+  2: {
+    n: [1, 3]
+  },
+  1: {
+    n: [2, 4]
+  }
+};
+const q = [
+
+];
+
+const curr = {
+  val: 3,
+  n: [2, 4]
 }
